@@ -1,35 +1,37 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import "./App.css";
+import { Layout, ConfigProvider, Breadcrumb } from "antd";
+import {
+  theme,
+  layoutStyle,
+  headerStyle,
+  contentStyle,
+} from "./theme/themeConfig";
+import UserTable from "./components/UserTable";
+
+const { Header, Content } = Layout;
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <ConfigProvider theme={theme}>
+      <Layout style={layoutStyle}>
+        <Header style={headerStyle}>
+          <img
+            src={
+              "https://flexxus.com.ar/wp-content/uploads/elementor/thumbs/logo-flexxus-header-pv8liah8khv6xfynvz03so9v98sk2tr50hts9we7dk.png"
+            }
+            alt="Flexxus logo"
+          />
+        </Header>
+        <Content style={contentStyle}>
+          <Breadcrumb style={{ margin: "16px 0" }}>
+            <Breadcrumb.Item>Usuarios</Breadcrumb.Item>
+            <Breadcrumb.Item>Listado de usuarios</Breadcrumb.Item>
+          </Breadcrumb>
+          <UserTable />
+        </Content>
+      </Layout>
+    </ConfigProvider>
+  );
 }
 
-export default App
+export default App;
