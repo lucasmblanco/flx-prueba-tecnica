@@ -10,7 +10,7 @@ const headerStyle: React.CSSProperties = {
   height: 64,
   paddingInline: 48,
   lineHeight: "64px",
-  backgroundColor: "#4096ff",
+  background: "grey",
 };
 
 const contentStyle: React.CSSProperties = {
@@ -18,13 +18,12 @@ const contentStyle: React.CSSProperties = {
   minHeight: 120,
   lineHeight: "120px",
   color: "#fff",
-  backgroundColor: "#0958d9",
+  paddingInline: "5rem",
 };
 
 const footerStyle: React.CSSProperties = {
   textAlign: "center",
   color: "#fff",
-  backgroundColor: "#4096ff",
 };
 
 const layoutStyle = {
