@@ -157,7 +157,16 @@ const UserTable: React.FC<userTableProps> = () => {
             key: "action",
             render: (_, record) => (
               <Space size="middle">
-                <a>Editar</a>
+                {/* <a>Editar</a> */}
+                <Button
+                  type="link"
+                  onClick={() => {
+                    setUser(record);
+                    setOpenFormModal(true);
+                  }}
+                >
+                  Editar
+                </Button>
                 <Button
                   type="link"
                   onClick={() => {

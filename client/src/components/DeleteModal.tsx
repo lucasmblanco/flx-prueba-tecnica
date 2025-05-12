@@ -68,7 +68,13 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
       )}
     >
       <Space>
-        <span>Desea eleminar el usuario?</span>
+        <span>
+          Está seguro que quiere eliminar el usuario{" "}
+          <span
+            style={{ color: "red", fontStyle: "bold" }}
+          >{`@${user?.username}`}</span>
+          ?{" "}
+        </span>
       </Space>
     </Modal>
   );

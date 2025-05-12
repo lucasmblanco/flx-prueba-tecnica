@@ -1,3 +1,4 @@
+import { useContext, useEffect } from "react";
 import {
   Modal,
   Button,
@@ -9,8 +10,8 @@ import {
   InputNumber,
   Select,
 } from "antd";
-import { useContext } from "react";
 import { UsersListContext } from "../context/UsersListContext";
+import { UserContext } from "../context/UserContext";
 
 interface FormModalProps {
   openFormModal: boolean;
@@ -23,38 +24,58 @@ const FormModal: React.FC<FormModalProps> = ({
 }) => {
   const [form] = Form.useForm();
   const { setUsersList } = useContext(UsersListContext);
+  const { user, setUser } = useContext(UserContext);
 
   const handleOk = async () => {
     try {
       const values = await form.validateFields();
-      const response = await fetch("http://localhost:4000/users", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      });
 
-      const newUser = await response.json();
-      setUsersList((prev) => [...prev, newUser]);
+      let response;
+      if (user) {
+        response = await fetch(`http://localhost:4000/users/${user.id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(values),
+        });
+
+        const updatedUser = await response.json();
+        setUsersList((prev) =>
+          prev.map((u) => (u.id === updatedUser.id ? updatedUser : u)),
+        );
+      } else {
+        response = await fetch("http://localhost:4000/users", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(values),
+        });
+
+        const newUser = await response.json();
+        setUsersList((prev) => [...prev, newUser]);
+      }
       setOpenFormModal(false);
       form.resetFields();
     } catch (error) {
       console.log(error);
     }
-
-    // const newData = dataSource.map((item) =>
-    //   item.key === editingRecord.key ? { ...item, ...values } : item,
-    // );
-    // setDataSource(newData);
-    // setIsModalVisible(false);
-    // setEditingRecord(null);
   };
 
   const handleCancel = () => {
+    if (user) {
+      setUser(null);
+    }
     setOpenFormModal(false);
     form.resetFields();
   };
+
+  useEffect(() => {
+    if (user) {
+      form.setFieldsValue(user);
+    }
+  }, [user, form]);
 
   return (
     <Modal
