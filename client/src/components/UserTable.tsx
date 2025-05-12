@@ -1,16 +1,47 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useContext } from "react";
 import { Table, Tag, Space, Input, Select, Button, Flex } from "antd";
 import FormModal from "./FormModal";
+import { UsersContext } from "../context/UsersContext";
 
 const { Search } = Input;
 
 interface userTableProps {}
 
 const UserTable: React.FC<userTableProps> = () => {
-  const [users, setUsers] = useState<any[]>();
-  const [searchUser, setSearchUser] = useState("");
-  const [filterStatus, setFilterStatus] = useState<string>("");
+  const { users, setUsers } = useContext(UsersContext);
+
   const [openAddUser, setOpenAddUser] = useState(false);
+
+  const filterByNameOrLastname = useCallback(
+    async (input: string) => {
+      const [resultsByName, resultsByLastname] = await Promise.all([
+        fetch(`http://localhost:4000/users?name_like=${input}`).then(
+          (response) => response.json(),
+        ),
+        fetch(`http://localhost:4000/users?lastname_like=${input}`).then(
+          (response) => response.json(),
+        ),
+      ]);
+
+      const combinedResults = [...resultsByName, ...resultsByLastname];
+
+      const normalizedAndSorted = [
+        ...new Map(combinedResults.map((user) => [user.id, user])).values(),
+      ].sort((a, b) => a.id - b.id);
+
+      setUsers(normalizedAndSorted);
+    },
+    [setUsers],
+  );
+
+  const filterByStatus = useCallback(
+    async (status: string) => {
+      await fetch(`http://localhost:4000/users?status=${status}`)
+        .then((response) => response.json())
+        .then((data) => setUsers(data));
+    },
+    [setUsers],
+  );
 
   const fetchUsers = useCallback(async () => {
     const users = await fetch("http://localhost:4000/users").then((response) =>
@@ -27,7 +58,7 @@ const UserTable: React.FC<userTableProps> = () => {
     fetchUsers().then((data) => {
       setUsers(data);
     });
-  }, [fetchUsers]);
+  }, [fetchUsers, setUsers]);
 
   return (
     <>
@@ -38,7 +69,13 @@ const UserTable: React.FC<userTableProps> = () => {
             <Search
               placeholder="Busqueda por nombre o apellido"
               allowClear
-              onSearch={(value) => setSearchUser(value.toLowerCase())}
+              onSearch={(value) => {
+                if (!value) {
+                  fetchUsers().then((data) => setUsers(data));
+                } else {
+                  filterByNameOrLastname(value.toLowerCase());
+                }
+              }}
             />
           </Space.Compact>
           <Space.Compact>
@@ -47,9 +84,9 @@ const UserTable: React.FC<userTableProps> = () => {
               optionFilterProp="label"
               onChange={(value: string | undefined) => {
                 if (!value) {
-                  setFilterStatus("");
+                  fetchUsers().then((data) => setUsers(data));
                 } else {
-                  setFilterStatus(value);
+                  filterByStatus(value);
                 }
               }}
               allowClear
@@ -76,78 +113,55 @@ const UserTable: React.FC<userTableProps> = () => {
           </Button>
         </Space>
       </Flex>
-      {users?.length ? (
-        <Table
-          dataSource={users}
-          columns={[
-            {
-              title: "Usuario",
-              dataIndex: "username",
+      <Table
+        dataSource={users ? users : []}
+        columns={[
+          {
+            title: "Usuario",
+            dataIndex: "username",
+          },
+          {
+            title: "Nombre",
+            dataIndex: "name",
+          },
+          {
+            title: "Apellido",
+            dataIndex: "lastname",
+          },
+          {
+            title: "Estado",
+            dataIndex: "status",
+            render: (_, { status }) => {
+              let color;
+              let statusTranslated;
+              if (status === "active") {
+                color = "green";
+                statusTranslated = "ACTIVO";
+              } else {
+                color = "volcano";
+                statusTranslated = "INACTIVO";
+              }
+              return (
+                <Tag color={color} key={status}>
+                  {statusTranslated}
+                </Tag>
+              );
             },
-            {
-              title: "Nombre",
-              dataIndex: "name",
-            },
-            {
-              title: "Apellido",
-              dataIndex: "lastname",
-            },
-            {
-              title: "Nombre completo",
-              key: "fullname",
-              hidden: true,
-              filteredValue: [searchUser],
-              onFilter: (value, record) => {
-                if (value === "") {
-                  return true;
-                }
-                const fullname = `${record.name.toLowerCase()} ${record.lastname.toLowerCase()}`;
-                return fullname.includes(value);
-              },
-            },
-            {
-              title: "Estado",
-              dataIndex: "status",
-              filteredValue: [filterStatus],
-              onFilter: (value, record) => {
-                if (value === "") {
-                  return true;
-                }
-                return record.status === value;
-              },
-              render: (_, { status }) => {
-                let color;
-                let statusTranslated;
-                if (status === "active") {
-                  color = "green";
-                  statusTranslated = "ACTIVO";
-                } else {
-                  color = "volcano";
-                  statusTranslated = "INACTIVO";
-                }
-                return (
-                  <Tag color={color} key={status}>
-                    {statusTranslated}
-                  </Tag>
-                );
-              },
-            },
-            {
-              title: "Action",
-              key: "action",
-              render: (_, record) => (
-                <Space size="middle">
-                  <a>Editar</a>
-                  <a>Eliminar</a>
-                </Space>
-              ),
-            },
-          ]}
-          rowKey="id"
-        />
-      ) : (
-        <div>cargando...</div>
-      )}
+          },
+          {
+            title: "Action",
+            key: "action",
+            render: (_, record) => (
+              <Space size="middle">
+                <a>Editar</a>
+                <a>Eliminar</a>
+              </Space>
+            ),
+          },
+        ]}
+        rowKey="id"
+      />
+      )
     </>
   );
 };

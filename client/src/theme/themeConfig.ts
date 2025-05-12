@@ -27,8 +27,7 @@ const footerStyle: React.CSSProperties = {
 };
 
 const layoutStyle = {
-  overflow: "hidden",
-  height: "100vh",
+  // height: "100vh",
 };
 
 export { theme, headerStyle, contentStyle, footerStyle, layoutStyle };
