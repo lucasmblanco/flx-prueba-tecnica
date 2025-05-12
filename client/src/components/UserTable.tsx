@@ -1,16 +1,20 @@
 import { useEffect, useState, useCallback, useContext } from "react";
 import { Table, Tag, Space, Input, Select, Button, Flex } from "antd";
 import FormModal from "./FormModal";
-import { UsersContext } from "../context/UsersContext";
+import { UsersListContext } from "../context/UsersListContext";
+import { UserContext } from "../context/UserContext";
+import DeleteModal from "./DeleteModal";
 
 const { Search } = Input;
 
 interface userTableProps {}
 
 const UserTable: React.FC<userTableProps> = () => {
-  const { users, setUsers } = useContext(UsersContext);
+  const { usersList, setUsersList } = useContext(UsersListContext);
+  const { setUser } = useContext(UserContext);
 
-  const [openAddUser, setOpenAddUser] = useState(false);
+  const [openFormModal, setOpenFormModal] = useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
   const filterByNameOrLastname = useCallback(
     async (input: string) => {
@@ -29,18 +33,18 @@ const UserTable: React.FC<userTableProps> = () => {
         ...new Map(combinedResults.map((user) => [user.id, user])).values(),
       ].sort((a, b) => a.id - b.id);
 
-      setUsers(normalizedAndSorted);
+      setUsersList(normalizedAndSorted);
     },
-    [setUsers],
+    [setUsersList],
   );
 
   const filterByStatus = useCallback(
     async (status: string) => {
       await fetch(`http://localhost:4000/users?status=${status}`)
         .then((response) => response.json())
-        .then((data) => setUsers(data));
+        .then((data) => setUsersList(data));
     },
-    [setUsers],
+    [setUsersList],
   );
 
   const fetchUsers = useCallback(async () => {
@@ -51,18 +55,18 @@ const UserTable: React.FC<userTableProps> = () => {
   }, []);
 
   function handleAddUser() {
-    setOpenAddUser(true);
+    setOpenFormModal(true);
   }
 
   useEffect(() => {
     fetchUsers().then((data) => {
-      setUsers(data);
+      setUsersList(data);
     });
-  }, [fetchUsers, setUsers]);
+  }, [fetchUsers, setUsersList]);
 
   return (
     <>
-      <FormModal openAddUser={openAddUser} setOpenAddUser={setOpenAddUser} />{" "}
+      {" "}
       <Flex justify="space-between">
         <Space>
           <Space.Compact>
@@ -71,7 +75,7 @@ const UserTable: React.FC<userTableProps> = () => {
               allowClear
               onSearch={(value) => {
                 if (!value) {
-                  fetchUsers().then((data) => setUsers(data));
+                  fetchUsers().then((data) => setUsersList(data));
                 } else {
                   filterByNameOrLastname(value.toLowerCase());
                 }
@@ -84,7 +88,7 @@ const UserTable: React.FC<userTableProps> = () => {
               optionFilterProp="label"
               onChange={(value: string | undefined) => {
                 if (!value) {
-                  fetchUsers().then((data) => setUsers(data));
+                  fetchUsers().then((data) => setUsersList(data));
                 } else {
                   filterByStatus(value);
                 }
@@ -114,7 +118,7 @@ const UserTable: React.FC<userTableProps> = () => {
         </Space>
       </Flex>
       <Table
-        dataSource={users ? users : []}
+        dataSource={usersList ? usersList : []}
         columns={[
           {
             title: "Usuario",
@@ -154,7 +158,15 @@ const UserTable: React.FC<userTableProps> = () => {
             render: (_, record) => (
               <Space size="middle">
                 <a>Editar</a>
-                <a>Eliminar</a>
+                <Button
+                  type="link"
+                  onClick={() => {
+                    setUser(record);
+                    setOpenDeleteModal(true);
+                  }}
+                >
+                  Eliminar
+                </Button>
               </Space>
             ),
           },
@@ -162,6 +174,14 @@ const UserTable: React.FC<userTableProps> = () => {
         rowKey="id"
       />
       )
+      <FormModal
+        openFormModal={openFormModal}
+        setOpenFormModal={setOpenFormModal}
+      />
+      <DeleteModal
+        openDeleteModal={openDeleteModal}
+        setOpenDeleteModal={setOpenDeleteModal}
+      />
     </>
   );
 };

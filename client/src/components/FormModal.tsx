@@ -9,22 +9,25 @@ import {
   InputNumber,
   Select,
 } from "antd";
+import { useContext } from "react";
+import { UsersListContext } from "../context/UsersListContext";
 
 interface FormModalProps {
-  openAddUser: boolean;
-  setOpenAddUser: React.Dispatch<React.SetStateAction<boolean>>;
+  openFormModal: boolean;
+  setOpenFormModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const FormModal: React.FC<FormModalProps> = ({
-  openAddUser,
-  setOpenAddUser,
+  openFormModal,
+  setOpenFormModal,
 }) => {
   const [form] = Form.useForm();
+  const { setUsersList } = useContext(UsersListContext);
 
   const handleOk = async () => {
     try {
       const values = await form.validateFields();
-      await fetch("http://localhost:4000/users", {
+      const response = await fetch("http://localhost:4000/users", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -32,7 +35,9 @@ const FormModal: React.FC<FormModalProps> = ({
         body: JSON.stringify(values),
       });
 
-      setOpenAddUser(false);
+      const newUser = await response.json();
+      setUsersList((prev) => [...prev, newUser]);
+      setOpenFormModal(false);
       form.resetFields();
     } catch (error) {
       console.log(error);
@@ -47,7 +52,7 @@ const FormModal: React.FC<FormModalProps> = ({
   };
 
   const handleCancel = () => {
-    setOpenAddUser(false);
+    setOpenFormModal(false);
     form.resetFields();
   };
 
@@ -55,7 +60,7 @@ const FormModal: React.FC<FormModalProps> = ({
     <Modal
       width={"40rem"}
       centered
-      open={openAddUser}
+      open={openFormModal}
       title="Agregar usuario"
       onOk={handleOk}
       onCancel={handleCancel}
