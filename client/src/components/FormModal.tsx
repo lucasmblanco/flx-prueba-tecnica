@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect } from "react";
+import { useEffect } from "react";
 import {
   Modal,
   Button,
@@ -10,9 +10,8 @@ import {
   InputNumber,
   Select,
 } from "antd";
-import { UsersListContext } from "../context/UsersListContext";
-import { UserContext } from "../context/UserContext";
-import { dataProvider } from "../services/dataProvider";
+import { FORM_VALIDATIONS } from "../utils/formUtils";
+import useActions from "../hooks/useActions";
 
 interface FormModalProps {
   openFormModal: boolean;
@@ -24,31 +23,11 @@ const FormModal: React.FC<FormModalProps> = ({
   setOpenFormModal,
 }) => {
   const [form] = Form.useForm();
-  const { setUsersList } = useContext(UsersListContext);
-  const { user, setUser } = useContext(UserContext);
-
-  const createUser = useCallback(
-    async (values) => {
-      const newUser = await dataProvider.create("users", values);
-      setUsersList((prev) => [...prev, newUser.data]);
-    },
-    [setUsersList],
-  );
-
-  const updateUser = useCallback(
-    async (values) => {
-      const updatedUser = await dataProvider.update("users", user?.id, values);
-      setUsersList((prev) =>
-        prev.map((u) => (u.id === updatedUser.data.id ? updatedUser.data : u)),
-      );
-    },
-    [setUsersList, user?.id],
-  );
+  const { user, createUser, updateUser, resetUser } = useActions();
 
   const handleOk = async () => {
     try {
       const values = await form.validateFields();
-
       if (user) {
         await updateUser(values);
       } else {
@@ -63,7 +42,7 @@ const FormModal: React.FC<FormModalProps> = ({
 
   const handleCancel = () => {
     if (user) {
-      setUser(null);
+      resetUser();
     }
     setOpenFormModal(false);
     form.resetFields();
@@ -100,10 +79,7 @@ const FormModal: React.FC<FormModalProps> = ({
               layout="vertical"
               label="Usuario"
               name="username"
-              rules={[
-                { required: true, message: "El usuario es obligatorio" },
-                { min: 3, message: "Debe tener al menos 3 caracteres" },
-              ]}
+              rules={FORM_VALIDATIONS.username}
             >
               <Input placeholder="johndoe" />
             </Form.Item>
@@ -113,10 +89,7 @@ const FormModal: React.FC<FormModalProps> = ({
               layout="vertical"
               label="Email"
               name="email"
-              rules={[
-                { required: true, message: "El email es obligatorio" },
-                { type: "email", message: "Debe ser un email válido" },
-              ]}
+              rules={FORM_VALIDATIONS.email}
             >
               <Input placeholder="johndoe@domain.com" type="email" />
             </Form.Item>
@@ -128,7 +101,7 @@ const FormModal: React.FC<FormModalProps> = ({
               layout="vertical"
               label="Nombre"
               name="name"
-              rules={[{ required: true, message: "El nombre es obligatorio" }]}
+              rules={FORM_VALIDATIONS.name}
             >
               <Input placeholder="John" />
             </Form.Item>
@@ -138,9 +111,7 @@ const FormModal: React.FC<FormModalProps> = ({
               layout="vertical"
               label="Apellido"
               name="lastname"
-              rules={[
-                { required: true, message: "El apellido es obligatorio" },
-              ]}
+              rules={FORM_VALIDATIONS.lastname}
             >
               <Input placeholder="Doe" />
             </Form.Item>
@@ -152,7 +123,7 @@ const FormModal: React.FC<FormModalProps> = ({
               layout="vertical"
               label="Estado"
               name="status"
-              rules={[{ required: true, message: "El estado es obligatorio" }]}
+              rules={FORM_VALIDATIONS.status}
             >
               <Select
                 placeholder="Seleccione un estado"
@@ -168,10 +139,7 @@ const FormModal: React.FC<FormModalProps> = ({
               layout="vertical"
               label="Edad"
               name="age"
-              rules={[
-                { required: true, message: "La edad es obligatoria" },
-                { type: "number", min: 1, message: "Debe ser mayor a 0" },
-              ]}
+              rules={FORM_VALIDATIONS.age}
             >
               <InputNumber
                 min={1}

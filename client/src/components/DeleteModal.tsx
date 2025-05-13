@@ -1,8 +1,5 @@
-import { useContext } from "react";
-import { Modal, Button, Divider, Space, Flex } from "antd";
-import { UserContext } from "../context/UserContext";
-import { UsersListContext } from "../context/UsersListContext";
-import { dataProvider } from "../services/dataProvider";
+import { Modal, Button, Divider, Space, Flex, Typography } from "antd";
+import useActions from "../hooks/useActions";
 
 interface DeleteModalProps {
   openDeleteModal: boolean;
@@ -13,14 +10,12 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
   openDeleteModal,
   setOpenDeleteModal,
 }) => {
-  const { user, setUser } = useContext(UserContext);
-  const { setUsersList } = useContext(UsersListContext);
+  const { user, deleteUser, resetUser } = useActions();
 
   const handleDelete = async () => {
     try {
-      await dataProvider.delete("users", user?.id);
-      setUsersList((prev) => prev.filter((u) => u.id !== user?.id));
-      setUser(null);
+      await deleteUser();
+      resetUser();
       setOpenDeleteModal(false);
     } catch (error) {
       console.error(error);
@@ -28,7 +23,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
   };
 
   const handleCancel = () => {
-    setUser(null);
+    resetUser();
     setOpenDeleteModal(false);
   };
 
@@ -37,18 +32,16 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
       width={"40rem"}
       centered
       open={openDeleteModal}
-      title="Eliminar usuario"
+      title={<Typography.Text strong>Eliminar usuario</Typography.Text>}
       onCancel={handleCancel}
       footer={() => (
         <>
           <Divider />
           <Flex justify="end">
             <Space>
-              {" "}
               <Button onClick={handleCancel}>Cancelar</Button>
             </Space>
             <Space>
-              {" "}
               <Button
                 color="danger"
                 variant="solid"
@@ -62,15 +55,11 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
         </>
       )}
     >
-      <Space>
-        <span>
-          Está seguro que quiere eliminar el usuario{" "}
-          <span
-            style={{ color: "red", fontStyle: "bold" }}
-          >{`@${user?.username}`}</span>
-          ?{" "}
-        </span>
-      </Space>
+      <Divider />
+      <Typography.Text>
+        Está seguro que quiere eliminar el usuario{" "}
+        <Typography.Text type="danger">@{user?.username}</Typography.Text>?
+      </Typography.Text>
     </Modal>
   );
 };

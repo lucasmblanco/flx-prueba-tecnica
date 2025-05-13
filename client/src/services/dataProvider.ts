@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:4000";
+import { API_URL } from "../constants";
 
 export const dataProvider = {
   getList: async (resource, params = {}) => {

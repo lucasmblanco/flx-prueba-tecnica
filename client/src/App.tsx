@@ -1,35 +1,22 @@
 import "./App.css";
-import { Layout, ConfigProvider, Breadcrumb } from "antd";
-import {
-  theme,
-  layoutStyle,
-  headerStyle,
-  contentStyle,
-} from "./theme/themeConfig";
+import { Layout, ConfigProvider } from "antd";
+import { theme, layoutStyle, contentStyle } from "./theme/themeConfig";
 import UsersTable from "./components/UsersTable";
 import { UsersListProvider } from "./context/UsersListContext";
 import { UserProvider } from "./context/UserContext";
+import PageHeader from "./components/PageHeader";
+import BreadcrumbContainer from "./components/BreadcrumbContainer";
 
-const { Header, Content } = Layout;
+const { Content } = Layout;
 
 function App() {
   return (
     <ConfigProvider theme={theme}>
       <Layout style={layoutStyle}>
-        <Header style={headerStyle}>
-          <img
-            src={
-              "https://flexxus.com.ar/wp-content/uploads/elementor/thumbs/logo-flexxus-header-pv8liah8khv6xfynvz03so9v98sk2tr50hts9we7dk.png"
-            }
-            alt="Flexxus logo"
-          />
-        </Header>
+        <PageHeader />
         <UsersListProvider>
           <Content style={contentStyle}>
-            <Breadcrumb style={{ margin: "16px 0" }}>
-              <Breadcrumb.Item>Usuarios</Breadcrumb.Item>
-              <Breadcrumb.Item>Listado de usuarios</Breadcrumb.Item>
-            </Breadcrumb>
+            <BreadcrumbContainer />
             <UserProvider>
               <UsersTable />
             </UserProvider>
