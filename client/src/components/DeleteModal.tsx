@@ -37,6 +37,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
     setUser(null);
     setOpenDeleteModal(false);
   };
+
   return (
     <Modal
       width={"40rem"}

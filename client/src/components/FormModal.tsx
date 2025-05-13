@@ -72,10 +72,10 @@ const FormModal: React.FC<FormModalProps> = ({
   };
 
   useEffect(() => {
-    if (user) {
+    if (user && openFormModal) {
       form.setFieldsValue(user);
     }
-  }, [user, form]);
+  }, [user, form, openFormModal]);
 
   return (
     <Modal
