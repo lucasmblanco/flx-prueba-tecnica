@@ -2,6 +2,7 @@ import { useContext } from "react";
 import { Modal, Button, Divider, Space, Flex } from "antd";
 import { UserContext } from "../context/UserContext";
 import { UsersListContext } from "../context/UsersListContext";
+import { dataProvider } from "../services/dataProvider";
 
 interface DeleteModalProps {
   openDeleteModal: boolean;
@@ -17,17 +18,10 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
 
   const handleDelete = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/users/${user?.id}`, {
-        method: "DELETE",
-      });
-
-      if (response.status === 200 || response.status === 204) {
-        setUsersList((prev) => prev.filter((u) => u.id !== user?.id));
-        setUser(null);
-        setOpenDeleteModal(false);
-      } else {
-        throw new Error("No se pudo eliminar");
-      }
+      await dataProvider.delete("users", user?.id);
+      setUsersList((prev) => prev.filter((u) => u.id !== user?.id));
+      setUser(null);
+      setOpenDeleteModal(false);
     } catch (error) {
       console.error(error);
     }

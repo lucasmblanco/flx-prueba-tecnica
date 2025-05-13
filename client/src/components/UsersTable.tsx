@@ -4,6 +4,7 @@ import FormModal from "./FormModal";
 import { UsersListContext } from "../context/UsersListContext";
 import { UserContext } from "../context/UserContext";
 import DeleteModal from "./DeleteModal";
+import { dataProvider } from "../services/dataProvider";
 
 const { Search } = Input;
 
@@ -15,48 +16,45 @@ const UsersTable = () => {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [total, setTotal] = useState(0);
   const [pagination, setPagination] = useState({ current: 1, pageSize: 9 });
+  const [statusFilter, setStatusFilter] = useState("");
+  const [inputFilter, setInputFilter] = useState("");
 
-  const filterByNameOrLastname = useCallback(
-    async (input: string) => {
-      const [resultsByName, resultsByLastname] = await Promise.all([
-        fetch(`http://localhost:4000/users?name_like=${input}`).then(
-          (response) => response.json(),
-        ),
-        fetch(`http://localhost:4000/users?lastname_like=${input}`).then(
-          (response) => response.json(),
-        ),
-      ]);
+  const fetchUsers = useCallback(
+    async (page, limit, input, status) => {
+      try {
+        const [resultsByName, resultsByLastname] = await Promise.all(
+          ["name", "lastname"].map((field) =>
+            dataProvider.getList("users", {
+              pagination: {
+                page: page,
+                limit: limit,
+              },
+              filters: {
+                [field]: input,
+                status: status,
+              },
+            }),
+          ),
+        );
+        const combinedResults = [
+          ...resultsByName.data,
+          ...resultsByLastname.data,
+        ];
 
-      const combinedResults = [...resultsByName, ...resultsByLastname];
+        const combinedTotal = resultsByName.total + resultsByName.total;
 
-      const normalizedAndSorted = [
-        ...new Map(combinedResults.map((user) => [user.id, user])).values(),
-      ].sort((a, b) => a.id - b.id);
+        const normalizedAndSorted = [
+          ...new Map(combinedResults.map((user) => [user.id, user])).values(),
+        ].sort((a, b) => a.id - b.id);
 
-      setUsersList(normalizedAndSorted);
+        setTotal(combinedTotal);
+        setUsersList(normalizedAndSorted);
+      } catch (error) {
+        console.error(error);
+      }
     },
     [setUsersList],
   );
-
-  const filterByStatus = useCallback(
-    async (status: string) => {
-      await fetch(`http://localhost:4000/users?status=${status}`)
-        .then((response) => response.json())
-        .then((data) => setUsersList(data));
-    },
-    [setUsersList],
-  );
-
-  const fetchUsers = useCallback(async (page, pageSize) => {
-    const users = await fetch(
-      `http://localhost:4000/users?_page=${page}&_limit=${pageSize}`,
-    ).then((response) => {
-      const totalCount = Number(response.headers.get("X-Total-Count"));
-      setTotal(totalCount);
-      return response.json();
-    });
-    return users;
-  }, []);
 
   function handleAddUser() {
     setOpenFormModal(true);
@@ -67,10 +65,13 @@ const UsersTable = () => {
   };
 
   useEffect(() => {
-    fetchUsers(pagination.current, pagination.pageSize).then((data) => {
-      setUsersList(data);
-    });
-  }, [fetchUsers, setUsersList, pagination]);
+    fetchUsers(
+      pagination.current,
+      pagination.pageSize,
+      inputFilter,
+      statusFilter,
+    );
+  }, [fetchUsers, inputFilter, pagination, statusFilter]);
 
   return (
     <>
@@ -82,13 +83,13 @@ const UsersTable = () => {
               placeholder="Busqueda por nombre o apellido"
               allowClear
               onSearch={(value) => {
-                if (!value) {
-                  fetchUsers(pagination.current, pagination.pageSize).then(
-                    (data) => setUsersList(data),
-                  );
-                } else {
-                  filterByNameOrLastname(value.toLowerCase());
-                }
+                setInputFilter(value);
+                fetchUsers(
+                  pagination.current,
+                  pagination.pageSize,
+                  value.toLowerCase(),
+                  statusFilter,
+                );
               }}
             />
           </Space.Compact>
@@ -96,14 +97,14 @@ const UsersTable = () => {
             <Select
               placeholder="Filtrar por estado"
               optionFilterProp="label"
-              onChange={(value: string | undefined) => {
-                if (!value) {
-                  fetchUsers(pagination.current, pagination.pageSize).then(
-                    (data) => setUsersList(data),
-                  );
-                } else {
-                  filterByStatus(value);
-                }
+              onChange={(value) => {
+                setStatusFilter(value ? value : "");
+                fetchUsers(
+                  pagination.current,
+                  pagination.pageSize,
+                  inputFilter,
+                  value ? value : "",
+                );
               }}
               allowClear
               options={[

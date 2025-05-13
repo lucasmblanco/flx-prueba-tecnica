@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useCallback, useContext, useEffect } from "react";
 import {
   Modal,
   Button,
@@ -12,6 +12,7 @@ import {
 } from "antd";
 import { UsersListContext } from "../context/UsersListContext";
 import { UserContext } from "../context/UserContext";
+import { dataProvider } from "../services/dataProvider";
 
 interface FormModalProps {
   openFormModal: boolean;
@@ -26,35 +27,32 @@ const FormModal: React.FC<FormModalProps> = ({
   const { setUsersList } = useContext(UsersListContext);
   const { user, setUser } = useContext(UserContext);
 
+  const createUser = useCallback(
+    async (values) => {
+      const newUser = await dataProvider.create("users", values);
+      setUsersList((prev) => [...prev, newUser.data]);
+    },
+    [setUsersList],
+  );
+
+  const updateUser = useCallback(
+    async (values) => {
+      const updatedUser = await dataProvider.update("users", user?.id, values);
+      setUsersList((prev) =>
+        prev.map((u) => (u.id === updatedUser.data.id ? updatedUser.data : u)),
+      );
+    },
+    [setUsersList, user?.id],
+  );
+
   const handleOk = async () => {
     try {
       const values = await form.validateFields();
 
-      let response;
       if (user) {
-        response = await fetch(`http://localhost:4000/users/${user.id}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(values),
-        });
-
-        const updatedUser = await response.json();
-        setUsersList((prev) =>
-          prev.map((u) => (u.id === updatedUser.id ? updatedUser : u)),
-        );
+        await updateUser(values);
       } else {
-        response = await fetch("http://localhost:4000/users", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(values),
-        });
-
-        const newUser = await response.json();
-        setUsersList((prev) => [...prev, newUser]);
+        await createUser(values);
       }
       setOpenFormModal(false);
       form.resetFields();
