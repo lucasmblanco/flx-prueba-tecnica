@@ -7,14 +7,14 @@ import DeleteModal from "./DeleteModal";
 
 const { Search } = Input;
 
-interface userTableProps {}
-
-const UserTable: React.FC<userTableProps> = () => {
+const UsersTable = () => {
   const { usersList, setUsersList } = useContext(UsersListContext);
   const { setUser } = useContext(UserContext);
 
   const [openFormModal, setOpenFormModal] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [total, setTotal] = useState(0);
+  const [pagination, setPagination] = useState({ current: 1, pageSize: 9 });
 
   const filterByNameOrLastname = useCallback(
     async (input: string) => {
@@ -47,10 +47,14 @@ const UserTable: React.FC<userTableProps> = () => {
     [setUsersList],
   );
 
-  const fetchUsers = useCallback(async () => {
-    const users = await fetch("http://localhost:4000/users").then((response) =>
-      response.json(),
-    );
+  const fetchUsers = useCallback(async (page, pageSize) => {
+    const users = await fetch(
+      `http://localhost:4000/users?_page=${page}&_limit=${pageSize}`,
+    ).then((response) => {
+      const totalCount = Number(response.headers.get("X-Total-Count"));
+      setTotal(totalCount);
+      return response.json();
+    });
     return users;
   }, []);
 
@@ -58,11 +62,15 @@ const UserTable: React.FC<userTableProps> = () => {
     setOpenFormModal(true);
   }
 
+  const handleTableChange = (pagination) => {
+    setPagination(pagination);
+  };
+
   useEffect(() => {
-    fetchUsers().then((data) => {
+    fetchUsers(pagination.current, pagination.pageSize).then((data) => {
       setUsersList(data);
     });
-  }, [fetchUsers, setUsersList]);
+  }, [fetchUsers, setUsersList, pagination]);
 
   return (
     <>
@@ -75,7 +83,9 @@ const UserTable: React.FC<userTableProps> = () => {
               allowClear
               onSearch={(value) => {
                 if (!value) {
-                  fetchUsers().then((data) => setUsersList(data));
+                  fetchUsers(pagination.current, pagination.pageSize).then(
+                    (data) => setUsersList(data),
+                  );
                 } else {
                   filterByNameOrLastname(value.toLowerCase());
                 }
@@ -88,7 +98,9 @@ const UserTable: React.FC<userTableProps> = () => {
               optionFilterProp="label"
               onChange={(value: string | undefined) => {
                 if (!value) {
-                  fetchUsers().then((data) => setUsersList(data));
+                  fetchUsers(pagination.current, pagination.pageSize).then(
+                    (data) => setUsersList(data),
+                  );
                 } else {
                   filterByStatus(value);
                 }
@@ -119,6 +131,12 @@ const UserTable: React.FC<userTableProps> = () => {
       </Flex>
       <Table
         dataSource={usersList ? usersList : []}
+        pagination={{
+          current: pagination.current,
+          pageSize: pagination.pageSize,
+          total: total,
+        }}
+        onChange={handleTableChange}
         columns={[
           {
             title: "Usuario",
@@ -157,7 +175,6 @@ const UserTable: React.FC<userTableProps> = () => {
             key: "action",
             render: (_, record) => (
               <Space size="middle">
-                {/* <a>Editar</a> */}
                 <Button
                   type="link"
                   onClick={() => {
@@ -195,4 +212,4 @@ const UserTable: React.FC<userTableProps> = () => {
   );
 };
 
-export default UserTable;
+export default UsersTable;

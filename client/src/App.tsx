@@ -6,7 +6,7 @@ import {
   headerStyle,
   contentStyle,
 } from "./theme/themeConfig";
-import UserTable from "./components/UserTable";
+import UsersTable from "./components/UsersTable";
 import { UsersListProvider } from "./context/UsersListContext";
 import { UserProvider } from "./context/UserContext";
 
@@ -31,7 +31,7 @@ function App() {
               <Breadcrumb.Item>Listado de usuarios</Breadcrumb.Item>
             </Breadcrumb>
             <UserProvider>
-              <UserTable />
+              <UsersTable />
             </UserProvider>
           </Content>
         </UsersListProvider>
