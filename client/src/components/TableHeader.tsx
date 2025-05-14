@@ -1,28 +1,20 @@
 import { Flex, Space, Input, Select, Button } from "antd";
-
+import { STATUS_OPTIONS } from "../constants";
 const { Search } = Input;
 
-const statusOptions = [
-  {
-    value: "inactive",
-    label: "Inactivo",
-  },
-  {
-    value: "active",
-    label: "Activo",
-  },
-];
+interface TableHeaderProps {
+  handleAddButtonModal: () => void;
+  loading: boolean;
+  handleSearchInput: (value: string) => void;
+  handleStatusChange: (value: string) => void;
+}
 
-const TableHeader = ({
-  setOpenFormModal,
+const TableHeader: React.FC<TableHeaderProps> = ({
+  handleAddButtonModal,
   loading,
   handleSearchInput,
   handleStatusChange,
 }) => {
-  function handleAddButtonModal() {
-    setOpenFormModal(true);
-  }
-
   return (
     <Flex justify="space-between">
       <Space>
@@ -41,7 +33,7 @@ const TableHeader = ({
             optionFilterProp="label"
             onChange={handleStatusChange}
             allowClear
-            options={statusOptions}
+            options={STATUS_OPTIONS}
           />
         </Space.Compact>
       </Space>

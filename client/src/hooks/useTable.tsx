@@ -4,6 +4,12 @@ import { UserContext } from "../context/UserContext";
 import { dataProvider } from "../services/dataProvider";
 import useTableActions from "./useTableActions";
 import { normalizeAndMergeUserData } from "../utils/tableUtils";
+import type { User, FetchUsersListParams } from "../types";
+
+type Result<T> = {
+  data: T[];
+  total: number;
+};
 
 const useTable = () => {
   const { usersList, setUsersList } = useContext(UsersListContext);
@@ -13,47 +19,48 @@ const useTable = () => {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [total, setTotal] = useState(0);
 
-  const initialFetchUser = useCallback(
-    async (page, limit, input, status) => {
+  const fetchUsersList = useCallback(
+    async ({
+      page,
+      limit,
+      searchTerm = "",
+      status = "",
+    }: FetchUsersListParams) => {
       try {
-        let users;
-        let total;
-        if (input !== "" || status !== "") {
+        let result: Result<User>;
+        if (searchTerm || status) {
           const [resultsByName, resultsByLastname] = await Promise.all(
             ["name", "lastname"].map((field) =>
-              dataProvider.getList("users", {
+              dataProvider.getList<User>("users", {
                 pagination: {
                   page: page,
                   limit: limit,
                 },
                 filters: {
-                  [field]: input,
+                  [field]: searchTerm,
                   status: status,
                 },
               }),
             ),
           );
 
-          const normalizedResults = normalizeAndMergeUserData(
+          const usersData = normalizeAndMergeUserData(
             resultsByName,
             resultsByLastname,
           );
-
-          users = normalizedResults.users;
-          total = normalizedResults.total;
+          result = usersData;
         } else {
-          const usersList = await dataProvider.getList("users", {
+          const usersData = await dataProvider.getList<User>("users", {
             pagination: {
               page: page,
               limit: limit,
             },
           });
-          users = usersList.data;
-          total = usersList.total;
+          result = usersData;
         }
 
-        setTotal(total);
-        setUsersList(users);
+        setTotal(result.total);
+        setUsersList(result.data);
       } catch (error) {
         console.error(error);
       }
@@ -70,17 +77,21 @@ const useTable = () => {
     handleTableChange,
     handleSearchInput,
     handleStatusChange,
-  } = useTableActions(initialFetchUser);
+  } = useTableActions(fetchUsersList);
 
-  const handleEdit = (record) => {
+  const handleEdit = (record: User) => {
     setUser(record);
     setOpenFormModal(true);
   };
 
-  const handleDelete = (record) => {
+  const handleDelete = (record: User) => {
     setUser(record);
     setOpenDeleteModal(true);
   };
+
+  function handleAddButtonModal() {
+    setOpenFormModal(true);
+  }
 
   useEffect(() => {
     fetchUsers(
@@ -92,6 +103,7 @@ const useTable = () => {
   }, [fetchUsers, inputFilter, pagination, statusFilter]);
 
   return {
+    handleAddButtonModal,
     handleDelete,
     handleEdit,
     handleSearchInput,

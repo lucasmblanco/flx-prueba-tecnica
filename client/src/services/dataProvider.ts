@@ -1,9 +1,10 @@
 import { API_URL, LIKE_FILTERS } from "../constants";
+import type { DataProvider } from "../types";
 
-const sleep = async (ms) =>
+const sleep = async (ms: number) =>
   await new Promise((resolve) => setTimeout(resolve, ms));
 
-export const dataProvider = {
+export const dataProvider: DataProvider = {
   getList: async (resource, params = {}) => {
     await sleep(3000);
     const url = new URL(`${API_URL}/${resource}`);
@@ -21,8 +22,8 @@ export const dataProvider = {
     }
 
     if (params.pagination) {
-      url.searchParams.append("_page", params.pagination.page);
-      url.searchParams.append("_limit", params.pagination.limit);
+      url.searchParams.append("_page", params.pagination.page as string);
+      url.searchParams.append("_limit", params.pagination.limit as string);
     }
 
     const response = await fetch(url);

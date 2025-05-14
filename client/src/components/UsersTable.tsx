@@ -7,6 +7,7 @@ import useTable from "../hooks/useTable";
 
 const UsersTable = () => {
   const {
+    handleAddButtonModal,
     handleDelete,
     handleEdit,
     handleSearchInput,
@@ -25,7 +26,7 @@ const UsersTable = () => {
   return (
     <>
       <TableHeader
-        setOpenFormModal={setOpenFormModal}
+        handleAddButtonModal={handleAddButtonModal}
         loading={loading}
         handleSearchInput={handleSearchInput}
         handleStatusChange={handleStatusChange}

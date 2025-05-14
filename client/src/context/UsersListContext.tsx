@@ -1,17 +1,8 @@
 import { createContext, useState } from "react";
-import type { Dispatch, SetStateAction } from "react";
+import type { User, UsersListContextType } from "../types";
 
-interface User {
-  id: number;
-  username: string;
-  name: string;
-  lastname: string;
-  status: "active" | "inactive";
-}
-
-interface UsersListContextType {
-  usersList?: User[];
-  setUsersList: Dispatch<SetStateAction<User[] | []>>;
+interface UsersListProviderProps {
+  children: React.ReactNode;
 }
 
 const UsersListContext = createContext<UsersListContextType>({
@@ -19,8 +10,8 @@ const UsersListContext = createContext<UsersListContextType>({
   setUsersList: () => {},
 });
 
-const UsersListProvider = ({ children }) => {
-  const [usersList, setUsersList] = useState<any[]>([]);
+const UsersListProvider: React.FC<UsersListProviderProps> = ({ children }) => {
+  const [usersList, setUsersList] = useState<User[]>([]);
 
   return (
     <UsersListContext.Provider value={{ usersList, setUsersList }}>

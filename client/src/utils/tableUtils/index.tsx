@@ -1,27 +1,44 @@
 import { Tag, Button, Space } from "antd";
+import type { AnyObject } from "antd/es/_util/type";
+import type { ColumnType } from "antd/es/table";
+import { USERS_COLUMNS } from "../../constants";
 
-export const createUserColumns = (onEdit, onDelete) => [
+type CreateColumns = <T extends AnyObject>(
+  onEdit: (record: T) => void,
+  onDelete: (record: T) => void,
+) => ColumnType<T>[];
+
+export const createUserColumns: CreateColumns = (onEdit, onDelete) => [
   {
-    title: "Usuario",
-    dataIndex: "username",
+    title: USERS_COLUMNS.username.title,
+    dataIndex: USERS_COLUMNS.username.dataIndex,
   },
   {
-    title: "Nombre",
-    dataIndex: "name",
+    title: USERS_COLUMNS.name.title,
+    dataIndex: USERS_COLUMNS.name.dataIndex,
   },
   {
-    title: "Apellido",
-    dataIndex: "lastname",
+    title: USERS_COLUMNS.lastname.title,
+    dataIndex: USERS_COLUMNS.lastname.dataIndex,
   },
   {
-    title: "Estado",
-    dataIndex: "status",
-    render: (_, { status }) => {
-      const color = status === "active" ? "green" : "volcano";
-      const statusTranslated = status === "active" ? "ACTIVO" : "INACTIVO";
+    title: USERS_COLUMNS.status.title,
+    dataIndex: USERS_COLUMNS.status.dataIndex,
+    render: (_: unknown, record: AnyObject) => {
+      const { color, label } =
+        record.status === USERS_COLUMNS.status.types.active.value
+          ? {
+              color: USERS_COLUMNS.status.types.active.color,
+              label: USERS_COLUMNS.status.types.active.label,
+            }
+          : {
+              color: USERS_COLUMNS.status.types.inactive.color,
+              label: USERS_COLUMNS.status.types.inactive.label,
+            };
+
       return (
-        <Tag color={color} key={status}>
-          {statusTranslated}
+        <Tag color={color} key={record.status}>
+          {label}
         </Tag>
       );
     },
@@ -29,7 +46,7 @@ export const createUserColumns = (onEdit, onDelete) => [
   {
     title: "Action",
     key: "action",
-    render: (_, record) => (
+    render: (_: unknown, record: AnyObject) => (
       <Space size="middle">
         <Button type="link" onClick={() => onEdit(record)}>
           Editar
@@ -42,14 +59,17 @@ export const createUserColumns = (onEdit, onDelete) => [
   },
 ];
 
-export const normalizeAndMergeUserData = (sourceA, sourceB) => {
+export const normalizeAndMergeUserData = <T extends { id: number | string }>(
+  sourceA: { data: T[]; total?: number },
+  sourceB: { data: T[]; total?: number },
+) => {
   const mergedUsers = [...sourceA.data, ...sourceB.data];
-  const deduplicatedAndSortedUsers = [
+  const usersData = [
     ...new Map(mergedUsers.map((user) => [user.id, user])).values(),
-  ].sort((a, b) => a.id - b.id);
-  const totalUsers = deduplicatedAndSortedUsers.length;
+  ].sort((a, b) => (a.id as number) - (b.id as number));
+  const totalUsersCount = usersData.length;
   return {
-    users: deduplicatedAndSortedUsers,
-    total: totalUsers,
+    data: usersData,
+    total: totalUsersCount,
   };
 };

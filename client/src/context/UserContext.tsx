@@ -1,13 +1,6 @@
 import { createContext, useState } from "react";
 import type { Dispatch, SetStateAction, ReactNode } from "react";
-
-interface User {
-  id: number;
-  username: string;
-  name: string;
-  lastname: string;
-  status: "active" | "inactive";
-}
+import type { User } from "../types";
 
 interface UserContextType {
   user: User | null;

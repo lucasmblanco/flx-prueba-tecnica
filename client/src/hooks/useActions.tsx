@@ -2,13 +2,14 @@ import { useCallback, useContext } from "react";
 import { UserContext } from "../context/UserContext";
 import { UsersListContext } from "../context/UsersListContext";
 import { dataProvider } from "../services/dataProvider";
+import type { User } from "../types";
 
 const useActions = () => {
   const { user, setUser } = useContext(UserContext);
   const { setUsersList } = useContext(UsersListContext);
 
   const createUser = useCallback(
-    async (values) => {
+    async (values: User) => {
       const newUser = await dataProvider.create("users", values);
       setUsersList((prev) => [...prev, newUser.data]);
     },
@@ -16,8 +17,12 @@ const useActions = () => {
   );
 
   const updateUser = useCallback(
-    async (values) => {
-      const updatedUser = await dataProvider.update("users", user?.id, values);
+    async (values: User) => {
+      const updatedUser = await dataProvider.update(
+        "users",
+        user?.id as string,
+        values,
+      );
       setUsersList((prev) =>
         prev.map((u) => (u.id === updatedUser.data.id ? updatedUser.data : u)),
       );
@@ -26,7 +31,7 @@ const useActions = () => {
   );
 
   const deleteUser = useCallback(async () => {
-    await dataProvider.delete("users", user?.id);
+    await dataProvider.delete("users", user?.id as string);
     setUsersList((prev) => prev.filter((u) => u.id !== user?.id));
   }, [setUsersList, user?.id]);
 
