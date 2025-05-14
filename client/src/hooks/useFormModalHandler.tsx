@@ -5,9 +5,16 @@ import useActions from "./useActions";
 const useFormModalHandler = ({
   modalStatus,
   closeModal,
+  refetch,
 }: {
   modalStatus: boolean;
   closeModal: () => void;
+  refetch: (
+    page?: number,
+    limit?: number,
+    searchTerm?: string,
+    status?: string,
+  ) => Promise<void>;
 }) => {
   const [form] = Form.useForm();
   const { user, createUser, updateUser, resetUser } = useActions();
@@ -24,8 +31,12 @@ const useFormModalHandler = ({
       }
       closeModal();
       form.resetFields();
-    } catch (error) {
-      console.log(error);
+      refetch();
+    } catch {
+      console.error(
+        "Se produjeron los siguientes errores",
+        form.getFieldsError().map((errorItem) => errorItem.errors[0]),
+      );
     } finally {
       setLoading(false);
     }

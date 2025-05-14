@@ -15,16 +15,24 @@ import useFormModalHandler from "../hooks/useFormModalHandler";
 interface FormModalProps {
   openFormModal: boolean;
   setOpenFormModal: React.Dispatch<React.SetStateAction<boolean>>;
+  refetch: (
+    page?: number,
+    limit?: number,
+    searchTerm?: string,
+    status?: string,
+  ) => Promise<void>;
 }
 
 const FormModal: React.FC<FormModalProps> = ({
   openFormModal,
   setOpenFormModal,
+  refetch,
 }) => {
   const { form, loading, handleOk, handleCancel, buttonLabel } =
     useFormModalHandler({
       modalStatus: openFormModal,
       closeModal: () => setOpenFormModal(false),
+      refetch: refetch,
     });
 
   return (

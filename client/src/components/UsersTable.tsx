@@ -8,6 +8,7 @@ import { tableStyle } from "../theme/themeConfig";
 
 const UsersTable = () => {
   const {
+    fetchUsers,
     handleAddButtonModal,
     handleDelete,
     handleEdit,
@@ -49,10 +50,12 @@ const UsersTable = () => {
       <FormModal
         openFormModal={openFormModal}
         setOpenFormModal={setOpenFormModal}
+        refetch={fetchUsers}
       />
       <DeleteModal
         openDeleteModal={openDeleteModal}
         setOpenDeleteModal={setOpenDeleteModal}
+        refetch={fetchUsers}
       />
     </>
   );

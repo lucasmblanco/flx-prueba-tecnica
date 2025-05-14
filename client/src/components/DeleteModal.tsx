@@ -4,14 +4,22 @@ import useDeleteModalHandler from "../hooks/useDeleteModalHandler";
 interface DeleteModalProps {
   openDeleteModal: boolean;
   setOpenDeleteModal: React.Dispatch<React.SetStateAction<boolean>>;
+  refetch: (
+    page?: number,
+    limit?: number,
+    searchTerm?: string,
+    status?: string,
+  ) => Promise<void>;
 }
 
 const DeleteModal: React.FC<DeleteModalProps> = ({
   openDeleteModal,
   setOpenDeleteModal,
+  refetch,
 }) => {
   const { user, handleDelete, handleCancel, loading } = useDeleteModalHandler({
     closeModal: () => setOpenDeleteModal(false),
+    refetch: refetch,
   });
 
   return (

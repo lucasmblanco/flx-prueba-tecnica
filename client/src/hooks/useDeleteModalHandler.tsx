@@ -1,7 +1,18 @@
 import { useState } from "react";
 import useActions from "./useActions";
 
-const useDeleteModalHandler = ({ closeModal }: { closeModal: () => void }) => {
+const useDeleteModalHandler = ({
+  closeModal,
+  refetch,
+}: {
+  closeModal: () => void;
+  refetch: (
+    page?: number,
+    limit?: number,
+    searchTerm?: string,
+    status?: string,
+  ) => Promise<void>;
+}) => {
   const { user, deleteUser, resetUser } = useActions();
   const [loading, setLoading] = useState(false);
 
@@ -11,6 +22,7 @@ const useDeleteModalHandler = ({ closeModal }: { closeModal: () => void }) => {
       await deleteUser();
       resetUser();
       closeModal();
+      refetch();
     } catch (error) {
       console.error(error);
     } finally {
