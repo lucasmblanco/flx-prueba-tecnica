@@ -22,6 +22,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({
         <Search
           style={searchInputStyle}
           size="large"
+          disabled={loading}
           loading={loading}
           placeholder="Busqueda por nombre o apellido"
           allowClear
@@ -30,6 +31,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({
 
         <Select
           size="large"
+          disabled={loading}
           loading={loading}
           placeholder="Filtrar por estado"
           optionFilterProp="label"
