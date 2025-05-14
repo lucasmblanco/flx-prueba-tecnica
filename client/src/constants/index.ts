@@ -56,6 +56,5 @@ export const USERS_COLUMNS = {
         label: "DELETE",
       },
     },
-    width: "",
   },
 };
