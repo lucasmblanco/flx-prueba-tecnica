@@ -1,6 +1,5 @@
 import { Button, Divider, Flex, Modal, Space, Typography } from "antd";
-import { useState } from "react";
-import useActions from "../hooks/useActions";
+import useDeleteModalHandler from "../hooks/useDeleteModalHandler";
 
 interface DeleteModalProps {
   openDeleteModal: boolean;
@@ -11,26 +10,9 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
   openDeleteModal,
   setOpenDeleteModal,
 }) => {
-  const { user, deleteUser, resetUser } = useActions();
-  const [loading, setLoading] = useState(false);
-
-  const handleDelete = async () => {
-    try {
-      setLoading(true);
-      await deleteUser();
-      resetUser();
-      setOpenDeleteModal(false);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleCancel = () => {
-    resetUser();
-    setOpenDeleteModal(false);
-  };
+  const { user, handleDelete, handleCancel, loading } = useDeleteModalHandler({
+    closeModal: () => setOpenDeleteModal(false),
+  });
 
   return (
     <Modal

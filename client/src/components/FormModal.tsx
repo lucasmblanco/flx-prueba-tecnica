@@ -9,9 +9,8 @@ import {
   Row,
   Select,
 } from "antd";
-import { useEffect, useState } from "react";
-import useActions from "../hooks/useActions";
 import { FORM_VALIDATIONS } from "../utils/formUtils";
+import useFormModalHandler from "../hooks/useFormModalHandler";
 
 interface FormModalProps {
   openFormModal: boolean;
@@ -22,43 +21,11 @@ const FormModal: React.FC<FormModalProps> = ({
   openFormModal,
   setOpenFormModal,
 }) => {
-  const [form] = Form.useForm();
-  const { user, createUser, updateUser, resetUser } = useActions();
-  const [loading, setLoading] = useState(false);
-
-  const handleOk = async () => {
-    try {
-      setLoading(true);
-      const values = await form.validateFields();
-      if (user) {
-        await updateUser(values);
-      } else {
-        await createUser(values);
-      }
-      setOpenFormModal(false);
-      form.resetFields();
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleCancel = () => {
-    if (user) {
-      resetUser();
-    }
-    setOpenFormModal(false);
-    form.resetFields();
-  };
-
-  const buttonLabel = user ? "Editar usuario" : "Agregar usuario";
-
-  useEffect(() => {
-    if (user && openFormModal) {
-      form.setFieldsValue(user);
-    }
-  }, [user, form, openFormModal]);
+  const { form, loading, handleOk, handleCancel, buttonLabel } =
+    useFormModalHandler({
+      modalStatus: openFormModal,
+      closeModal: () => setOpenFormModal(false),
+    });
 
   return (
     <Modal
