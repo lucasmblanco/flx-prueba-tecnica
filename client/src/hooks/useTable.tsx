@@ -16,25 +16,41 @@ const useTable = () => {
   const initialFetchUser = useCallback(
     async (page, limit, input, status) => {
       try {
-        const [resultsByName, resultsByLastname] = await Promise.all(
-          ["name", "lastname"].map((field) =>
-            dataProvider.getList("users", {
-              pagination: {
-                page: page,
-                limit: limit,
-              },
-              filters: {
-                [field]: input,
-                status: status,
-              },
-            }),
-          ),
-        );
+        let users;
+        let total;
+        if (input !== "" || status !== "") {
+          const [resultsByName, resultsByLastname] = await Promise.all(
+            ["name", "lastname"].map((field) =>
+              dataProvider.getList("users", {
+                pagination: {
+                  page: page,
+                  limit: limit,
+                },
+                filters: {
+                  [field]: input,
+                  status: status,
+                },
+              }),
+            ),
+          );
 
-        const { users, total } = normalizeAndMergeUserData(
-          resultsByName,
-          resultsByLastname,
-        );
+          const normalizedResults = normalizeAndMergeUserData(
+            resultsByName,
+            resultsByLastname,
+          );
+
+          users = normalizedResults.users;
+          total = normalizedResults.total;
+        } else {
+          const usersList = await dataProvider.getList("users", {
+            pagination: {
+              page: page,
+              limit: limit,
+            },
+          });
+          users = usersList.data;
+          total = usersList.total;
+        }
 
         setTotal(total);
         setUsersList(users);
@@ -46,18 +62,15 @@ const useTable = () => {
   );
 
   const {
+    loading,
     pagination,
     statusFilter,
     inputFilter,
-    handleSearchInput,
     fetchUsers,
     handleTableChange,
+    handleSearchInput,
     handleStatusChange,
   } = useTableActions(initialFetchUser);
-
-  function handleAddButtonModal() {
-    setOpenFormModal(true);
-  }
 
   const handleEdit = (record) => {
     setUser(record);
@@ -79,19 +92,19 @@ const useTable = () => {
   }, [fetchUsers, inputFilter, pagination, statusFilter]);
 
   return {
-    pagination,
-    usersList,
-    openFormModal,
-    openDeleteModal,
-    total,
-    handleSearchInput,
-    handleTableChange,
-    handleStatusChange,
-    handleAddButtonModal,
-    handleEdit,
     handleDelete,
-    setOpenFormModal,
+    handleEdit,
+    handleSearchInput,
+    handleStatusChange,
+    handleTableChange,
+    loading,
+    openDeleteModal,
+    openFormModal,
+    pagination,
     setOpenDeleteModal,
+    setOpenFormModal,
+    total,
+    usersList,
   };
 };
 

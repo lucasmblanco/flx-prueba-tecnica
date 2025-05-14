@@ -1,20 +1,28 @@
-import { API_URL } from "../constants";
+import { API_URL, LIKE_FILTERS } from "../constants";
+
+const sleep = async (ms) =>
+  await new Promise((resolve) => setTimeout(resolve, ms));
 
 export const dataProvider = {
   getList: async (resource, params = {}) => {
+    await sleep(3000);
     const url = new URL(`${API_URL}/${resource}`);
 
     if (params.filters) {
       for (const [key, value] of Object.entries(params.filters)) {
         if (value !== "") {
-          url.searchParams.append(`${key}_like`, value);
+          if (LIKE_FILTERS.includes(key)) {
+            url.searchParams.append(`${key}_like`, value);
+          } else {
+            url.searchParams.append(key, value);
+          }
         }
       }
     }
 
     if (params.pagination) {
-      url.searchParams.append("page", params.pagination.page);
-      url.searchParams.append("limit", params.pagination.limit);
+      url.searchParams.append("_page", params.pagination.page);
+      url.searchParams.append("_limit", params.pagination.limit);
     }
 
     const response = await fetch(url);
@@ -30,6 +38,7 @@ export const dataProvider = {
   },
 
   getOne: async (resource, id) => {
+    await sleep(3000);
     const response = await fetch(`${API_URL}/${resource}/${id}`);
     if (!response.ok) throw new Error("Error fetching item");
     const data = await response.json();
@@ -37,6 +46,7 @@ export const dataProvider = {
   },
 
   create: async (resource, payload) => {
+    await sleep(3000);
     const response = await fetch(`${API_URL}/${resource}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -49,6 +59,7 @@ export const dataProvider = {
   },
 
   update: async (resource, id, payload) => {
+    await sleep(3000);
     const response = await fetch(`${API_URL}/${resource}/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -61,6 +72,7 @@ export const dataProvider = {
   },
 
   delete: async (resource, id) => {
+    await sleep(3000);
     const response = await fetch(`${API_URL}/${resource}/${id}`, {
       method: "DELETE",
     });

@@ -1,5 +1,6 @@
 import { Modal, Button, Divider, Space, Flex, Typography } from "antd";
 import useActions from "../hooks/useActions";
+import { useState } from "react";
 
 interface DeleteModalProps {
   openDeleteModal: boolean;
@@ -11,14 +12,18 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
   setOpenDeleteModal,
 }) => {
   const { user, deleteUser, resetUser } = useActions();
+  const [loading, setLoading] = useState(false);
 
   const handleDelete = async () => {
     try {
+      setLoading(true);
       await deleteUser();
       resetUser();
       setOpenDeleteModal(false);
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -43,6 +48,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
             </Space>
             <Space>
               <Button
+                loading={loading}
                 color="danger"
                 variant="solid"
                 key="submit"

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   Modal,
   Button,
@@ -24,9 +24,11 @@ const FormModal: React.FC<FormModalProps> = ({
 }) => {
   const [form] = Form.useForm();
   const { user, createUser, updateUser, resetUser } = useActions();
+  const [loading, setLoading] = useState(false);
 
   const handleOk = async () => {
     try {
+      setLoading(true);
       const values = await form.validateFields();
       if (user) {
         await updateUser(values);
@@ -37,6 +39,8 @@ const FormModal: React.FC<FormModalProps> = ({
       form.resetFields();
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -65,7 +69,12 @@ const FormModal: React.FC<FormModalProps> = ({
       footer={() => (
         <>
           <Divider />
-          <Button type="primary" key="submit" onClick={handleOk}>
+          <Button
+            type="primary"
+            key="submit"
+            onClick={handleOk}
+            loading={loading}
+          >
             Agregar usuario
           </Button>
         </>

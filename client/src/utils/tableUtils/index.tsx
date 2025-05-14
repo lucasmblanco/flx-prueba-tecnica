@@ -44,12 +44,10 @@ export const createUserColumns = (onEdit, onDelete) => [
 
 export const normalizeAndMergeUserData = (sourceA, sourceB) => {
   const mergedUsers = [...sourceA.data, ...sourceB.data];
-  const totalUsers = sourceA.total + sourceB.total;
-
   const deduplicatedAndSortedUsers = [
     ...new Map(mergedUsers.map((user) => [user.id, user])).values(),
   ].sort((a, b) => a.id - b.id);
-
+  const totalUsers = deduplicatedAndSortedUsers.length;
   return {
     users: deduplicatedAndSortedUsers,
     total: totalUsers,

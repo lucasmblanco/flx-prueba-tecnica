@@ -1,36 +1,37 @@
 import { Table } from "antd";
 import FormModal from "./FormModal";
 import DeleteModal from "./DeleteModal";
-import TableActions from "./TableActions";
+import TableHeader from "./TableHeader";
 import { createUserColumns } from "../utils/tableUtils";
 import useTable from "../hooks/useTable";
 
 const UsersTable = () => {
   const {
-    pagination,
-    usersList,
-    openFormModal,
-    openDeleteModal,
-    total,
-    handleSearchInput,
-    handleTableChange,
-    handleStatusChange,
-    handleAddButtonModal,
-    handleEdit,
     handleDelete,
-    setOpenFormModal,
+    handleEdit,
+    handleSearchInput,
+    handleStatusChange,
+    handleTableChange,
+    loading,
+    openDeleteModal,
+    openFormModal,
+    pagination,
     setOpenDeleteModal,
+    setOpenFormModal,
+    total,
+    usersList,
   } = useTable();
 
   return (
     <>
-      <TableActions
-        handleAddButton={handleAddButtonModal}
+      <TableHeader
+        setOpenFormModal={setOpenFormModal}
+        loading={loading}
         handleSearchInput={handleSearchInput}
         handleStatusChange={handleStatusChange}
       />
       <Table
-        dataSource={usersList ? usersList : []}
+        dataSource={usersList}
         pagination={{
           current: pagination.current,
           pageSize: pagination.pageSize,
@@ -39,6 +40,7 @@ const UsersTable = () => {
         onChange={handleTableChange}
         columns={createUserColumns(handleEdit, handleDelete)}
         rowKey="id"
+        loading={loading}
       />
       )
       <FormModal

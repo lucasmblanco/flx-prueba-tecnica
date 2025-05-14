@@ -13,16 +13,22 @@ const statusOptions = [
   },
 ];
 
-const TableActions = ({
+const TableHeader = ({
+  setOpenFormModal,
+  loading,
   handleSearchInput,
   handleStatusChange,
-  handleAddButton,
 }) => {
+  function handleAddButtonModal() {
+    setOpenFormModal(true);
+  }
+
   return (
     <Flex justify="space-between">
       <Space>
         <Space.Compact>
           <Search
+            loading={loading}
             placeholder="Busqueda por nombre o apellido"
             allowClear
             onSearch={handleSearchInput}
@@ -30,6 +36,7 @@ const TableActions = ({
         </Space.Compact>
         <Space.Compact>
           <Select
+            loading={loading}
             placeholder="Filtrar por estado"
             optionFilterProp="label"
             onChange={handleStatusChange}
@@ -42,7 +49,7 @@ const TableActions = ({
         <Button
           type="primary"
           style={{ marginBottom: 16 }}
-          onClick={handleAddButton}
+          onClick={handleAddButtonModal}
         >
           Agregar usuario
         </Button>
@@ -51,4 +58,4 @@ const TableActions = ({
   );
 };
 
-export default TableActions;
+export default TableHeader;

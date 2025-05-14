@@ -1,9 +1,10 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 
-const useTableActions = (initialFetchCallback) => {
+const useTableActions = (fetchCallback) => {
   const [pagination, setPagination] = useState({ current: 1, pageSize: 9 });
   const [statusFilter, setStatusFilter] = useState("");
   const [inputFilter, setInputFilter] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const fetchUsers = useCallback(
     async (
@@ -12,9 +13,18 @@ const useTableActions = (initialFetchCallback) => {
       input = inputFilter,
       status = statusFilter,
     ) => {
-      return initialFetchCallback(page, pageSize, input, status);
+      setLoading(true);
+      try {
+        const result = await fetchCallback(page, pageSize, input, status);
+        return result;
+      } catch (error) {
+        console.error("Error fetching users:", error);
+        throw error;
+      } finally {
+        setLoading(false);
+      }
     },
-    [initialFetchCallback, pagination, inputFilter, statusFilter],
+    [fetchCallback, pagination, inputFilter, statusFilter],
   );
 
   const handleTableChange = (newPagination) => {
@@ -31,6 +41,8 @@ const useTableActions = (initialFetchCallback) => {
   };
 
   return {
+    loading,
+    setLoading,
     pagination,
     statusFilter,
     inputFilter,
