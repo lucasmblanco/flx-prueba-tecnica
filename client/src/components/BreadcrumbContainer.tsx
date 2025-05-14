@@ -1,11 +1,13 @@
 import { Breadcrumb } from "antd";
+import { breadcrumbStyle } from "../theme/themeConfig";
 
 const BreadcrumbContainer = () => {
-	return (
-		<Breadcrumb
-			items={[{ title: "Usuarios" }, { title: "Listado de usuarios" }]}
-		/>
-	);
+  return (
+    <Breadcrumb
+      style={breadcrumbStyle}
+      items={[{ title: "Usuarios" }, { title: "Listado de usuarios" }]}
+    />
+  );
 };
 
 export default BreadcrumbContainer;

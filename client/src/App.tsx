@@ -10,21 +10,21 @@ import { contentStyle, layoutStyle, theme } from "./theme/themeConfig";
 const { Content } = Layout;
 
 function App() {
-	return (
-		<ConfigProvider theme={theme}>
-			<Layout style={layoutStyle}>
-				<PageHeader />
-				<UsersListProvider>
-					<Content style={contentStyle}>
-						<BreadcrumbContainer />
-						<UserProvider>
-							<UsersTable />
-						</UserProvider>
-					</Content>
-				</UsersListProvider>
-			</Layout>
-		</ConfigProvider>
-	);
+  return (
+    <ConfigProvider theme={theme}>
+      <Layout style={layoutStyle}>
+        <PageHeader />
+        <UsersListProvider>
+          <Content style={contentStyle}>
+            <BreadcrumbContainer />
+            <UserProvider>
+              <UsersTable />
+            </UserProvider>
+          </Content>
+        </UsersListProvider>
+      </Layout>
+    </ConfigProvider>
+  );
 }
 
 export default App;
