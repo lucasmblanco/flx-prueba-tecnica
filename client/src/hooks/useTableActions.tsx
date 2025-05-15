@@ -9,6 +9,7 @@ const useTableActions = (
     searchTerm,
     status,
   }: FetchUsersListParams) => Promise<void>,
+  setAllFilteredDataLoaded: (value: boolean) => void,
 ) => {
   const [pagination, setPagination] = useState({ current: 1, pageSize: 9 });
   const [statusFilter, setStatusFilter] = useState("");
@@ -44,6 +45,7 @@ const useTableActions = (
   };
 
   const handleSearchInput = (value: string) => {
+    setAllFilteredDataLoaded(false);
     const normalizedValue = value ? value.toLowerCase().trim() : "";
     setInputFilter(normalizedValue);
     setPagination((prev) => ({
@@ -53,6 +55,7 @@ const useTableActions = (
   };
 
   const handleStatusChange = (value: string) => {
+    setAllFilteredDataLoaded(false);
     setStatusFilter(value ? value : "");
     setPagination((prev) => ({
       ...prev,

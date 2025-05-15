@@ -18,6 +18,7 @@ const useTable = () => {
   const [openFormModal, setOpenFormModal] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [total, setTotal] = useState(0);
+  const [allFilteredDataLoaded, setAllFilteredDataLoaded] = useState(false);
 
   const fetchUsersList = useCallback(
     async ({
@@ -51,7 +52,9 @@ const useTable = () => {
             resultsByLastname,
           );
           result = usersData;
+          setAllFilteredDataLoaded(true);
         } else {
+          setAllFilteredDataLoaded(false);
           const usersData = await dataProvider.getList<User>("users", {
             pagination: {
               page: page,
@@ -79,7 +82,7 @@ const useTable = () => {
     handleTableChange,
     handleSearchInput,
     handleStatusChange,
-  } = useTableActions(fetchUsersList);
+  } = useTableActions(fetchUsersList, setAllFilteredDataLoaded);
 
   const handleEdit = (record: User) => {
     setUser(record);
@@ -96,13 +99,22 @@ const useTable = () => {
   }
 
   useEffect(() => {
+    if ((inputFilter || statusFilter) && allFilteredDataLoaded) return;
+
     fetchUsers(
       pagination.current,
       pagination.pageSize,
       inputFilter,
       statusFilter,
     );
-  }, [fetchUsers, inputFilter, pagination, statusFilter]);
+    setAllFilteredDataLoaded(false);
+  }, [
+    fetchUsers,
+    inputFilter,
+    pagination,
+    statusFilter,
+    allFilteredDataLoaded,
+  ]);
 
   return {
     fetchUsers,
