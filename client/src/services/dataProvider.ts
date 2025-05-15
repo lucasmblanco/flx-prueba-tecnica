@@ -1,7 +1,6 @@
-import { API_URL, LIKE_FILTERS } from "@constants/index";
+import { API_URL, LIKE_FILTERS, SLEEP_TIME } from "@constants/index";
 import type { DataProvider } from "@sharedTypes/index";
 import { nanoid } from "nanoid";
-import { SLEEP_TIME } from "@constants/index";
 
 const sleep = async (ms: number) =>
   await new Promise((resolve) => setTimeout(resolve, ms));
