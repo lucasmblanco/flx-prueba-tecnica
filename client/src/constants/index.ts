@@ -5,6 +5,12 @@ export const API_URL = "http://localhost:4000";
 
 export const LIKE_FILTERS = ["name", "lastname"];
 
+export const INITIAL_PAGE = 1;
+
+export const PAGE_SIZE = 9;
+
+export const SLEEP_TIME = 3000;
+
 export const STATUS_OPTIONS = [
   {
     value: "inactive",

@@ -1,13 +1,14 @@
 import { API_URL, LIKE_FILTERS } from "@constants/index";
 import type { DataProvider } from "@sharedTypes/index";
 import { nanoid } from "nanoid";
+import { SLEEP_TIME } from "@constants/index";
 
 const sleep = async (ms: number) =>
   await new Promise((resolve) => setTimeout(resolve, ms));
 
 export const dataProvider: DataProvider = {
   getList: async (resource, params = {}) => {
-    await sleep(3000);
+    await sleep(SLEEP_TIME);
     const url = new URL(`${API_URL}/${resource}`);
 
     if (params.filters) {
@@ -40,7 +41,7 @@ export const dataProvider: DataProvider = {
   },
 
   getOne: async (resource, id) => {
-    await sleep(3000);
+    await sleep(SLEEP_TIME);
     const response = await fetch(`${API_URL}/${resource}/${id}`);
     if (!response.ok) throw new Error("Error fetching item");
     const data = await response.json();
@@ -48,7 +49,7 @@ export const dataProvider: DataProvider = {
   },
 
   create: async (resource, payload) => {
-    await sleep(3000);
+    await sleep(SLEEP_TIME);
     const values = { id: nanoid(), ...payload };
     const response = await fetch(`${API_URL}/${resource}`, {
       method: "POST",
@@ -62,7 +63,7 @@ export const dataProvider: DataProvider = {
   },
 
   update: async (resource, id, payload) => {
-    await sleep(3000);
+    await sleep(SLEEP_TIME);
     const response = await fetch(`${API_URL}/${resource}/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -75,7 +76,7 @@ export const dataProvider: DataProvider = {
   },
 
   delete: async (resource, id) => {
-    await sleep(3000);
+    await sleep(SLEEP_TIME);
     const response = await fetch(`${API_URL}/${resource}/${id}`, {
       method: "DELETE",
     });

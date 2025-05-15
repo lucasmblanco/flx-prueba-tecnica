@@ -1,6 +1,7 @@
 import type { TablePaginationConfig } from "antd";
 import { useCallback, useState } from "react";
 import type { FetchUsersListParams } from "@sharedTypes/index";
+import { INITIAL_PAGE, PAGE_SIZE } from "@/constants";
 
 const useTableActions = (
   fetchCallback: ({
@@ -11,7 +12,10 @@ const useTableActions = (
   }: FetchUsersListParams) => Promise<void>,
   setAllFilteredDataLoaded: (value: boolean) => void,
 ) => {
-  const [pagination, setPagination] = useState({ current: 1, pageSize: 9 });
+  const [pagination, setPagination] = useState({
+    current: INITIAL_PAGE,
+    pageSize: PAGE_SIZE,
+  });
   const [statusFilter, setStatusFilter] = useState("");
   const [inputFilter, setInputFilter] = useState("");
   const [loading, setLoading] = useState(false);
@@ -39,8 +43,8 @@ const useTableActions = (
 
   const handleTableChange = (pagination: TablePaginationConfig) => {
     setPagination({
-      current: pagination.current ?? 1,
-      pageSize: pagination.pageSize ?? 9,
+      current: pagination.current ?? INITIAL_PAGE,
+      pageSize: pagination.pageSize ?? PAGE_SIZE,
     });
   };
 
@@ -50,7 +54,7 @@ const useTableActions = (
     setInputFilter(normalizedValue);
     setPagination((prev) => ({
       ...prev,
-      current: 1,
+      current: INITIAL_PAGE,
     }));
   };
 
@@ -59,7 +63,7 @@ const useTableActions = (
     setStatusFilter(value ? value : "");
     setPagination((prev) => ({
       ...prev,
-      current: 1,
+      current: INITIAL_PAGE,
     }));
   };
 
