@@ -1,5 +1,6 @@
-import { Button, Divider, Flex, Modal, Space, Typography } from "antd";
-import useDeleteModalHandler from "../hooks/useDeleteModalHandler";
+import { Divider, Modal, Typography } from "antd";
+import useDeleteModalHandler from "../../../hooks/useDeleteModalHandler";
+import DeleteFooter from "./DeleteFooter";
 
 interface DeleteModalProps {
   openDeleteModal: boolean;
@@ -29,25 +30,13 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
       open={openDeleteModal}
       title={<Typography.Text strong>Eliminar usuario</Typography.Text>}
       onCancel={handleCancel}
-      footer={() => (
-        <>
-          <Divider />
-          <Flex justify="end">
-            <Space>
-              <Button onClick={handleCancel}>Cancelar</Button>
-              <Button
-                loading={loading}
-                color="danger"
-                variant="solid"
-                key="submit"
-                onClick={handleDelete}
-              >
-                Eliminar
-              </Button>
-            </Space>
-          </Flex>
-        </>
-      )}
+      footer={
+        <DeleteFooter
+          handleCancel={handleCancel}
+          handleDelete={handleDelete}
+          loading={loading}
+        />
+      }
     >
       <Divider />
       <Typography.Text>
