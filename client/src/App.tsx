@@ -1,6 +1,6 @@
 import "./App.css";
 import { ConfigProvider, Layout } from "antd";
-import BreadcrumbContainer from "./components/BreadcrumbContainer";
+import BreadcrumbContainer from "@components/BreadcrumbContainer";
 import PageHeader from "./components/PageHeader";
 import UsersTable from "./components/UsersTable";
 import { UserProvider } from "./context/UserContext";
