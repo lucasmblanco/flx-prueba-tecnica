@@ -41,6 +41,7 @@ const UsersTable = () => {
           current: pagination.current,
           pageSize: pagination.pageSize,
           total: total,
+          showSizeChanger: false,
         }}
         onChange={handleTableChange}
         columns={createUserColumns(handleEdit, handleDelete)}
