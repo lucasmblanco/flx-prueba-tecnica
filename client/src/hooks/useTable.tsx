@@ -30,10 +30,16 @@ const useTable = () => {
       try {
         let result: Result<User>;
         /*
-          Es el unico modo que pude encontrar para poder traer resultados filtrados por un unico input
-          y que filtre por las columnas de "name" y "lastname". json-server no soporta el operador OR en las querys.
-          Tuve que eliminar la paginación cuando ocurre esto, de lo contrario no es posible acceder a un valor correcto de x-count-header,
-          que es necesario para que la tabla sepa el total de recursos que existen con los filtros actuales.
+         Esta es la única forma que encontré para filtrar resultados usando un solo input
+         que busque coincidencias tanto en "name" como en "lastname".
+
+         json-server no permite hacer búsquedas combinadas en múltiples columnas con una sola consulta,
+         así que tuve que hacer dos: una por "name" y otra por "lastname", y después unir los resultados.
+
+         Cuando sucede esto no uso "_page" ni "_limit" porque al paginar, solo obtengo una parte de los resultados en cada consulta,
+         y como pueden haber usuarios repetidos entre ambos resultados, no tengo forma de calcular
+         el total real de elementos únicos. Ese total es necesario para que la tabla pueda paginar correctamente
+         según los filtros aplicados.
         */
         if (searchTerm || status) {
           const [resultsByName, resultsByLastname] = await Promise.all(
