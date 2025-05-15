@@ -1,6 +1,6 @@
 import { Divider, Form, Modal, Row } from "antd";
-import { FORM_VALIDATIONS } from "../../../utils/formUtils";
-import useFormModalHandler from "../../../hooks/useFormModalHandler";
+import { FORM_VALIDATIONS } from "@utils/formUtils";
+import useFormModalHandler from "@hooks/useFormModalHandler";
 import FormInput from "./FormInput";
 import FormSelect from "./FormSelect";
 import FormInputNumber from "./FormInputNumber";
