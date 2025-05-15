@@ -1,6 +1,6 @@
 import { Layout } from "antd";
-import { LOGO_URL } from "../constants";
-import { headerStyle } from "../theme/themeConfig";
+import { LOGO_URL } from "@constants/index";
+import { headerStyle } from "@theme/themeConfig";
 
 const { Header } = Layout;
 

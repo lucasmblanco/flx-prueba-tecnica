@@ -1,7 +1,7 @@
 import { useCallback, useContext } from "react";
-import { UserContext } from "../context/UserContext";
-import { dataProvider } from "../services/dataProvider";
-import type { User } from "../types";
+import { UserContext } from "@context/UserContext";
+import { dataProvider } from "@services/dataProvider";
+import type { User } from "@sharedTypes/index";
 
 const useActions = () => {
   const { user, setUser } = useContext(UserContext);

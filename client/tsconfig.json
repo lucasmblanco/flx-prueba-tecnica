@@ -1,9 +1,4 @@
 {
-  "files": [],
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
-  ],
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
@@ -15,9 +10,13 @@
       "@context/*": ["src/context/*"],
       "@services/*": ["src/services/*"],
       "@theme/*": ["src/theme/*"],
-      "@types/*": ["src/types/*"],
+      "@sharedTypes/*": ["src/types/*"],
       "@utils/*": ["src/utils/*"]
     }
   },
-  "include": ["src"]
+  "include": ["src"],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ]
 }

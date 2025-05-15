@@ -1,5 +1,5 @@
-import { API_URL, LIKE_FILTERS } from "../constants";
-import type { DataProvider } from "../types";
+import { API_URL, LIKE_FILTERS } from "@constants/index";
+import type { DataProvider } from "@sharedTypes/index";
 import { nanoid } from "nanoid";
 
 const sleep = async (ms: number) =>

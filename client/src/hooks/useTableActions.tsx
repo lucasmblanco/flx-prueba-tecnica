@@ -1,6 +1,6 @@
 import type { TablePaginationConfig } from "antd";
 import { useCallback, useState } from "react";
-import type { FetchUsersListParams } from "../types";
+import type { FetchUsersListParams } from "@sharedTypes/index";
 
 const useTableActions = (
   fetchCallback: ({

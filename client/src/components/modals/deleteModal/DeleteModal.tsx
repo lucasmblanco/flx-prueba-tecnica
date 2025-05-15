@@ -1,5 +1,5 @@
 import { Divider, Modal, Typography } from "antd";
-import useDeleteModalHandler from "../../../hooks/useDeleteModalHandler";
+import useDeleteModalHandler from "@hooks/useDeleteModalHandler";
 import DeleteFooter from "./DeleteFooter";
 
 interface DeleteModalProps {

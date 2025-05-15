@@ -1,11 +1,11 @@
-import "./App.css";
+import "@/App.css";
 import { ConfigProvider, Layout } from "antd";
 import BreadcrumbContainer from "@components/BreadcrumbContainer";
-import PageHeader from "./components/PageHeader";
-import UsersTable from "./components/UsersTable";
-import { UserProvider } from "./context/UserContext";
-import { UsersListProvider } from "./context/UsersListContext";
-import { contentStyle, layoutStyle, theme } from "./theme/themeConfig";
+import PageHeader from "@components/PageHeader";
+import UsersTable from "@components/UsersTable";
+import { UserProvider } from "@context/UserContext";
+import { UsersListProvider } from "@context/UsersListContext";
+import { contentStyle, layoutStyle, theme } from "@theme/themeConfig";
 
 const { Content } = Layout;
 

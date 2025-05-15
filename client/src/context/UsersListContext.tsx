@@ -1,5 +1,5 @@
 import { createContext, useState } from "react";
-import type { User, UsersListContextType } from "../types";
+import type { User, UsersListContextType } from "@sharedTypes/index";
 
 interface UsersListProviderProps {
   children: React.ReactNode;

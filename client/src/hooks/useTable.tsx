@@ -1,9 +1,9 @@
 import { useCallback, useContext, useEffect, useState } from "react";
-import { UserContext } from "../context/UserContext";
-import { UsersListContext } from "../context/UsersListContext";
-import { dataProvider } from "../services/dataProvider";
-import type { FetchUsersListParams, User } from "../types";
-import { normalizeAndMergeUserData } from "../utils/tableUtils";
+import { UserContext } from "@context/UserContext";
+import { UsersListContext } from "@context/UsersListContext";
+import { dataProvider } from "@services/dataProvider";
+import type { FetchUsersListParams, User } from "@sharedTypes/index";
+import { normalizeAndMergeUserData } from "@utils/tableUtils";
 import useTableActions from "./useTableActions";
 
 type Result<T> = {

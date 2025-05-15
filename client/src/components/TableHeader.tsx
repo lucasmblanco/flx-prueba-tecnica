@@ -1,6 +1,6 @@
 import { Button, Flex, Input, Select, Space } from "antd";
-import { STATUS_OPTIONS } from "../constants";
-import { searchInputStyle } from "../theme/themeConfig";
+import { STATUS_OPTIONS } from "@constants/index";
+import { searchInputStyle } from "@theme/themeConfig";
 const { Search } = Input;
 
 interface TableHeaderProps {

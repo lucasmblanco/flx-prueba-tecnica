@@ -1,5 +1,5 @@
 import { Breadcrumb } from "antd";
-import { breadcrumbStyle } from "../theme/themeConfig";
+import { breadcrumbStyle } from "@theme/themeConfig";
 
 const BreadcrumbContainer = () => {
   return (

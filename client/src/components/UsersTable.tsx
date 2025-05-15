@@ -1,10 +1,10 @@
 import { Table } from "antd";
-import useTable from "../hooks/useTable";
-import { createUserColumns } from "../utils/tableUtils";
-import DeleteModal from "../components/modals/deleteModal";
-import FormModal from "../components/modals/formModal";
-import TableHeader from "./TableHeader";
-import { tableStyle } from "../theme/themeConfig";
+import useTable from "@hooks/useTable";
+import { createUserColumns } from "@utils/tableUtils";
+import DeleteModal from "@components/modals/deleteModal";
+import FormModal from "@components/modals/formModal";
+import TableHeader from "@components/TableHeader";
+import { tableStyle } from "@theme/themeConfig";
 
 const UsersTable = () => {
   const {

@@ -1,7 +1,7 @@
 import { Button, Space, Tag } from "antd";
 import type { AnyObject } from "antd/es/_util/type";
 import type { ColumnType } from "antd/es/table";
-import { USERS_COLUMNS } from "../../constants";
+import { USERS_COLUMNS } from "@constants/index";
 
 type CreateColumns = <T extends AnyObject>(
   onEdit: (record: T) => void,
